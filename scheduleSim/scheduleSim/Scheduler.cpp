@@ -2,7 +2,14 @@
 #include <vector>
 
 //returns the next process available for processing
-	Process* Scheduler::get_next_process();
+	Process* Scheduler::get_next_process(){
+		int s = q.size();
+		for(int i=0; i<s; i++){
+			if(q[i]->exist_processes())
+				return q[i]->get_next_process();
+				
+		}
+	}
 	
 	//inserts a process into the scheduler
 	void Scheduler::insert_process(Process* p){

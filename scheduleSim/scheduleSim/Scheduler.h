@@ -11,6 +11,9 @@ private:
 		std::vector<Schedule> multi_level_feedback_queue;
 
 public:
+
+	//will be overall clock
+
 	Schedule();
 	// Looks at current hardware state calls for the hardware
 	// to run certain processes

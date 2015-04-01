@@ -15,8 +15,13 @@ public:
 	Process* get_next_process(){
 		next_process = q.front();
 		q.pop();
-		return next_process();
+		return next_process();	
 	}
+	bool exist_processes(){
+		return !q.empty();
+	}
+	void_add_process(Process* p);
+
 
 };
 
@@ -25,6 +30,7 @@ protected:
 	std::queue<Process*> q;
 public:
 	FCFS();
+
 	void add_process(Process* p){
 		p->run_time = p->remaining_burst_time;
 		q.push(p);
@@ -32,7 +38,7 @@ public:
 
 };
 
-class Round_Robin: public FCFS{
+class Round_Robin: public Schedule{
 private:
 	int time_quantum;
 	
@@ -45,10 +51,11 @@ public:
 		time_quantum = t;
 	}
 	
-	void add_process(Process *p){
-		p->run_time = time_quantum;
+	void add_process(Process* p){
+		p->run_time = p->time_quantum;
 		q.push(p);
-	}	
+	}
+
 };
 
 //I might not be able to overload like this --Jenna
@@ -56,6 +63,7 @@ class SPN: public Schedule{
 private:
 	std::priority_queue<Process*> q;
 public:
+
 	void add_process(Process* p){
 		p->run_time = p->remaining_burst_time;
 		q.push(p);
