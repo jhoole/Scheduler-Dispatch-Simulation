@@ -1,5 +1,8 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
+
+#include "Schedule.h"
+#include "Process.h"
 #include <vector>
 class Hardware;
 
