@@ -4,35 +4,34 @@
 #include <sstream>
 #include "process.h"
 #include "Hardware.h"
-#include "Dispatch_event.h"
+#include "Event.h"
 
 using namespace std;
 /**
  reads in a list of processes to run from a file, 
- and loads those processes into the target process's dispatch queue
+ and adds a dispatch event for each one
 */
-
-void load_processes(string file_name, Hardware *hardware) {
-	ifstream f(file_name);
-	/* Read in each process */
+void load_processes(string file_name, Hardware *h) {
+	// TODO:
+	// open process file:
+	ifstream processes_file(file_name);
 	string line;
-	while (getline(f, line)) {
+	// for each line in file:
+	while (getline(processes_file, line)) {
 		istringstream lstream(line);
-		Process p;
-		Dispatch_event e;
-		e.p = p;
-		// get dispatch time
-		lstream >> e.t;
+		
+		// get process id, dispatch time, priority, cpu/io sequence
+		int pid, dt, priority;
+		vector<int> bursts;
 
-		// get priority
-		lstream >> p.priority;
+		lstream >> pid >> dt >> priority;
+		int burst;
+		while (lstream >> burst)
+			bursts.push_back(burst);
 
-		// get sequence of CPU/IO times
-		int i = 0;
-		while (!lstream.eof())
-			lstream >> p.bursts[i++];
-
-		// add this to hardware's programs	
-		hardware->events.insert(e);
+		// initialize new dispatch event
+		Dispatch_event* de = new Dispatch_event(dt, pid, priority, bursts);
+		// add dispatch event to hardware's event queue
+		h->push_event(de);
 	}
 }
