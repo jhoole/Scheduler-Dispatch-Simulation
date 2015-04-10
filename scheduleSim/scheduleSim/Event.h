@@ -55,4 +55,13 @@ public:
 	void run(Hardware* h);
 	Run_event(int t, run_request r);
 };
+
+class Finish_event : public Event {
+public:
+	int pid;
+	int core;
+	int runtime;
+	void run(Hardware* h);
+	Finish_event(int t, int pid) : Event(t), pid(pid) {}
+};
 #endif
