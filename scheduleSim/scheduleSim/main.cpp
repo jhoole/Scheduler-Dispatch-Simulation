@@ -3,7 +3,8 @@
 
 int main() {
 	Hardware h;
-	h.scheduler = new FCFS_scheduler();
+	Scheduler* s;
+	h.scheduler = s;
 	load_processes("processes.txt", &h);
 	h.simulate();
 }
