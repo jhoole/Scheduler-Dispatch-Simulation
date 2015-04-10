@@ -1,15 +1,18 @@
+
 #include <stdexcept>
 #include "Event.h"
 #include "Hardware.h"
 
 void Event::run(Hardware* h) {
 	// add this event to past events queue
-	h->past_events.push_back(this);
+	h->history.events.push_back(this);
 }
 
 void Dispatch_event::run(Hardware* h){
 	// create process from info
 	Process* p = new Process(id, priority, bursts);
+	p->history.dispatch_time = h->time;
+	p->history.last_ready_time = h->time;
 	// move process into process table
 	h->processes[id] = p;
 	Event::run(h);
@@ -23,9 +26,10 @@ void CPUend_event::run(Hardware *h)  {
 	}
 	bool proc_found = false;
 	// set core to -1
-	for (int i = 0; i < N_CORES; i++) {
-		if (h->cores[i] == pid) {
-			h->cores[i] = -1;
+	int core;
+	for (core = 0; core < N_CORES; core++) {
+		if (h->cores[core] == pid) {
+			h->cores[core] = -1;
 			proc_found = true;
 			break;
 		}
@@ -35,6 +39,8 @@ void CPUend_event::run(Hardware *h)  {
 		throw "process not found to be running on a core";
 	}
 	
+	h->history.core_busy_times[core] += h->time - h->history.core_last_busy_times[core];
+
 	// disassociate process with the CPUend_event
 	p->eid = -1;
 	// if an IO burst is next
@@ -58,11 +64,8 @@ void CPUend_event::run(Hardware *h)  {
 	}
 	// if the process is finished:
 	else {
-		p->status = FINISHED;
-		// add to finished proceses map
-		h->finished_processes[pid] = p;
-		// remove from the running processes map
-		h->processes.erase(h->processes.find(pid));
+		Finish_event *fe = new Finish_event(h->time, pid);
+		fe->run(h);
 	}
 	// set status to WAITING_IO
 	Event::run(h);
@@ -89,14 +92,12 @@ void IOend_event::run(Hardware* h) {
 		p->remaining_burst_time = p->bursts[p->bi];
 		// set status READY
 		p->status = READY;
+		p->history.last_ready_time = h->time;
 	}
 	// if the process is finished:
 	else {
-		p->status = FINISHED;
-		// move from processes to finished_processes map
-		h->finished_processes[pid] = p;
-		// remove from the running processes map
-		h->processes.erase(h->processes.find(pid));
+		Finish_event *fe = new Finish_event(h->time, pid);
+		fe->run(h);
 	}
 
 	// start running the next process in the queue
@@ -122,9 +123,10 @@ void Pause_event::run(Hardware* h)  {
 	// find which core process is running on, set that core to -1
 	bool proc_found = false;
 	// set core to -1
-	for (int i = 0; i < N_CORES; i++) {
-		if (h->cores[i] == pid) {
-			h->cores[i] = -1;
+	int core;
+	for (core = 0; core < N_CORES; core++) {
+		if (h->cores[core] == pid) {
+			h->cores[core] = -1;
 			proc_found = true;
 			break;
 		}
@@ -135,6 +137,11 @@ void Pause_event::run(Hardware* h)  {
 	}
 	// set process status to READY
 	p->status = READY;
+	p->history.last_ready_time = h->time;
+
+	int time_on_core = h->time - h->history.core_last_busy_times[core];
+	if (time_on_core > 0)
+		h->history.core_busy_times[core] += time_on_core;
 
 	// calculate process remaining burst time
 	if (p->begin_burst_time <= h->time)
@@ -180,6 +187,16 @@ void Run_event::run(Hardware* h) {
 	h->cores[core] = pid;
 	// set process status to RUNNING
 	p->status = RUNNING;
+
+	// keep track of statistics
+	p->history.context_switches++;
+	p->history.wait_time += h->time - p->history.last_ready_time;
+	if (p->history.dispatch_time == p->history.last_ready_time) {
+		p->history.response_time = h->time - p->history.dispatch_time;
+	}
+
+	h->history.core_last_busy_times[core] = h->time+CONTEXT_SWITCH_TIME;
+
 	// set begin burst time to current time + context switch time
 	p->begin_burst_time = h->time + CONTEXT_SWITCH_TIME;
 
@@ -204,4 +221,15 @@ Run_event::Run_event(int t, run_request r) : Event(t) {
 	pid = r.pid;
 	core = r.core;
 	runtime = r.time;
+}
+
+void Finish_event::run(Hardware* h) {
+	Process* p = h->processes[pid];
+	p->status = FINISHED;
+	p->history.turnaround_time = h->time - p->history.dispatch_time;
+	// move from processes to finished_processes map
+	h->history.processes[pid] = p;
+	// remove from the running processes map
+	h->processes.erase(h->processes.find(pid));
+	Event::run(h);
 }
