@@ -56,7 +56,7 @@ public:
 //I might not be able to overload like this --Jenna
 class SPN : public Schedule{
 private:
-	std::priority_queue<Process*> q;
+	std::priority_queue<int> q;
 public:
 
 };

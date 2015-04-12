@@ -55,5 +55,8 @@ public:
 		std::vector<int> b;
 		Process(0, 0, b);
 	}
+	bool operator < (const Process* other){
+		return this->remaining_burst_time < other->remaining_burst_time;
+	}
 };
 #endif
