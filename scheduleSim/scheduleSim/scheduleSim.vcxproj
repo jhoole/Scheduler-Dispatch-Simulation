@@ -79,15 +79,16 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="Hardware.h" />
     <ClInclude Include="Process.h" />
+    <ClInclude Include="Schedule.h" />
     <ClInclude Include="Scheduler.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Dispatch_event.cpp" />
+    <ClCompile Include="Event.cpp" />
     <ClCompile Include="Hardware.cpp" />
-    <ClCompile Include="IObegin_event.cpp" />
-    <ClCompile Include="IOend_event.cpp" />
-    <ClCompile Include="Pause_event.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="load_processes.cpp" />
+    <ClCompile Include="Schedule.cpp" />
+    <ClCompile Include="Scheduler.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

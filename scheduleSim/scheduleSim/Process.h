@@ -37,6 +37,8 @@ class Process {
 public:
 	int id;
 	int priority;
+	int level; //level of multi level feedback queue
+	int time_quantum; //how long running if round robin
 	std::vector<int> bursts; // array of CPU/IO/CPU/IO... bursts
 	Status status;
 	int bi; // current burst index
@@ -45,13 +47,13 @@ public:
 	int eid; // id of event associated with the process; 
 			  // to be removed from event queue if preempted
 	Process_history history;
+	
 
 	Process(int id, int priority, std::vector<int> bursts):
-		id(id), priority(priority), bursts(bursts), status(READY), bi(0), remaining_burst_time(bursts[0]), begin_burst_time(0), eid(-1){}
+		id(id), priority(priority), bursts(bursts), status(READY), bi(0), remaining_burst_time(bursts[0]), begin_burst_time(0), eid(-1), level(0){}
 	Process(){
 		std::vector<int> b;
 		Process(0, 0, b);
 	}
 };
 #endif
->>>>>>> 6b5aa283de80ea2a47d415ab3815da23f2a905e9

@@ -21,17 +21,23 @@ struct run_request{
 
 class Scheduler{
 private:
+	int next_process;
+	int time;
 	std::vector<Schedule> mlfq;
 public:
 	// Looks at current hardware state and requests hardware to 
 	// run processes
 	// these requests are returned in a vector.
-	std::vector<run_request> run(Hardware*) = 0;
-	void add_queue(Schedule q){
+	Scheduler(){
+		next_process = -1;
+		time = -1;
+	}
+	std::vector<run_request> run(Hardware*);
+	void add_queue(Schedule &q){
 		mlfq.push_back(q);
 	}
-	int get_next_process();
-	void insert_process();
+	void get_next_process();
+	void insert_process(int p, Hardware* h);
 };
 
 

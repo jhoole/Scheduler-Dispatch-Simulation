@@ -15,6 +15,8 @@ void Dispatch_event::run(Hardware* h){
 	p->history.last_ready_time = h->time;
 	// move process into process table
 	h->processes[id] = p;
+	//add process to Scheduler
+	h->scheduler->insert_process(p->id, h);
 	Event::run(h);
 }
 
@@ -47,6 +49,8 @@ void CPUend_event::run(Hardware *h)  {
 	if (p->bi < p->bursts.size() -1) {
 		// update process progress
 		p->bi++;
+		//set multi level feedback queue return level to 0
+		p->level = 0;
 		// move to IO queue
 		h->io_queue.push(pid);
 		// if first in queue:
@@ -93,6 +97,8 @@ void IOend_event::run(Hardware* h) {
 		// set status READY
 		p->status = READY;
 		p->history.last_ready_time = h->time;
+		//add back to Scheduler
+		h->scheduler->insert_process(p->id, h);
 	}
 	// if the process is finished:
 	else {

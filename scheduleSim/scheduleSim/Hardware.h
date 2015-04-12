@@ -43,6 +43,10 @@ public:
 	/* main simulation loop */
 	void simulate();
 
+	void add_scheduler(Scheduler *s){
+		scheduler = s;
+	}
+
 	Hardware() {
 		for (int i = 0; i < N_CORES; i++)
 			cores[i] = -1;
