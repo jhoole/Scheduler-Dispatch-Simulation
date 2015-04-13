@@ -144,7 +144,7 @@ void Pause_event::run(Hardware* h)  {
 	// set process status to READY
 	p->status = READY;
 	p->history.last_ready_time = h->time;
-
+	h->scheduler->insert_process(p->id, h); //insert process back to scheduler
 	int time_on_core = h->time - h->history.core_last_busy_times[core];
 	if (time_on_core > 0)
 		h->history.core_busy_times[core] += time_on_core;

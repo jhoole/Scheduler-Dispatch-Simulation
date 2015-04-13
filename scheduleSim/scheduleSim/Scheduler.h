@@ -23,7 +23,7 @@ class Scheduler{
 private:
 	int next_process;
 	int time;
-	std::vector<Schedule> mlfq;
+	std::vector<Schedule*> mlfq;
 public:
 	// Looks at current hardware state and requests hardware to 
 	// run processes
@@ -33,7 +33,7 @@ public:
 		time = -1;
 	}
 	std::vector<run_request> run(Hardware*);
-	void add_queue(Schedule &q){
+	void add_queue(Schedule *q){
 		mlfq.push_back(q);
 	}
 	void get_next_process();

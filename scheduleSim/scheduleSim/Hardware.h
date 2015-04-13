@@ -9,7 +9,7 @@
 #include "Event.h"
 #include "Scheduler.h"
 
-#define N_CORES 4
+#define N_CORES 2
 #define CONTEXT_SWITCH_TIME 2
 
 struct Hardware_history {

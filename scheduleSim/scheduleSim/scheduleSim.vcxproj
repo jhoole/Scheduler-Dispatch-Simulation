@@ -90,6 +90,10 @@
     <ClCompile Include="Schedule.cpp" />
     <ClCompile Include="Scheduler.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="processes.txt" />
+    <Text Include="processes1.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

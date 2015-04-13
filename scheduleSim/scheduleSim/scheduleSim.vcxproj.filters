@@ -51,4 +51,12 @@
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="processes.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="processes1.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
 </Project>
